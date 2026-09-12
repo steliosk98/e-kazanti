@@ -1,8 +1,52 @@
 <!doctype html>
-<html lang="el">
+<html lang="en">
+<head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>e-Kazanti</title>
-<h1>e-Kazanti</h1>
-<p>Coming soon.</p>
+<meta name="description" content="Online recreation of Kazantí (Καζαντί), the Cypriot nail-board luck game.">
+<meta name="theme-color" content="#1b1310">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%23bbb'/><circle cx='38' cy='38' r='12' fill='%23fff'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Rubik:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>e‑Kazantí <small>Καζαντί</small></h1>
+  <div class="credits" title="Credits">🪙 <b id="credits">0</b></div>
+</header>
+
+<main>
+  <div class="board-wrap">
+    <canvas id="board" aria-label="Kazanti board"></canvas>
+    <div id="toast" class="toast" hidden></div>
+  </div>
+
+  <aside class="panel">
+    <section>
+      <h2>Balls <span class="sub">leverage</span></h2>
+      <div class="seg" id="balls"></div>
+    </section>
+    <section>
+      <h2>Digit <span class="sub">wins on 7, 17, 27 …</span></h2>
+      <div class="seg" id="digits"></div>
+    </section>
+    <section>
+      <h2>Cards <span class="sub">9 numbers each</span></h2>
+      <div class="cards" id="cards"></div>
+    </section>
+    <div class="bar">
+      <div id="cost" class="cost"></div>
+      <button id="next" class="btn" hidden>Next round</button>
+    </div>
+    <div id="result" class="result" hidden></div>
+    <button id="shoot" class="btn shoot" type="button">Hold to pull · release to shoot</button>
+    <p class="hint" id="hint">…or drag <b>down</b> on the board to pull the plunger.</p>
+  </aside>
+</main>
+
+<footer>1 credit per bet per ball · a hit pays 10 · nothing real is at stake</footer>
+<script type="module" src="game.js"></script>
+</body>
 </html>
