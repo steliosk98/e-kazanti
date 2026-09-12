@@ -38,9 +38,9 @@ h1, h2, h3 { margin: 0; font-family: Cinzel, Georgia, serif; }
 .chip::after { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: #7a1420; border: 2px solid var(--gold-light); }
 
 /* ---------- layout ---------- */
-main { --head: 98px; display: grid; gap: 14px; padding: 6px 12px 16px; max-width: 1440px; margin: 0 auto;
+main { --head: 98px; display: grid; gap: 14px; padding: 6px 16px 16px; max-width: 1800px; margin: 0 auto;
   grid-template-areas: "board" "balls" "bets" "status"; }
-.board-wrap { grid-area: board; position: relative; width: 100%; margin: 0 auto; aspect-ratio: 656 / 938; }
+.board-wrap { grid-area: board; position: relative; width: 100%; margin: 0 auto; aspect-ratio: 656 / 828; }
 .balls-sec { grid-area: balls; } .bets-sec { grid-area: bets; } .status-sec { grid-area: status; }
 canvas {
   display: block; width: 100%; height: 100%; touch-action: none; border-radius: 10px; user-select: none; -webkit-user-select: none; cursor: grab;
@@ -112,7 +112,7 @@ canvas:active { cursor: grabbing; }
 .btn:active { transform: scale(.97); }
 .btn.next { background: var(--gold-grad); color: #1c1407; padding: 10px 18px; box-shadow: 0 6px 18px rgba(212, 175, 55, .3); }
 .btn.shoot { /* lives on the board, over the painted strip under the numbers */
-  --p: 0; position: absolute; left: 47%; bottom: 5.3%; transform: translateX(-50%); width: 38%; height: 5.4%; min-height: 44px; border-radius: 12px; overflow: hidden; z-index: 2; touch-action: none; user-select: none; -webkit-user-select: none;
+  --p: 0; position: absolute; left: 47%; bottom: 6.4%; transform: translateX(-50%); width: 38%; height: 5.4%; min-height: 44px; border-radius: 12px; overflow: hidden; z-index: 2; touch-action: none; user-select: none; -webkit-user-select: none;
   font: 800 clamp(14px, 2.6vh, 20px)/1 Cinzel, Georgia, serif; letter-spacing: .22em; color: #fff7e0; text-shadow: 0 2px 4px rgba(0, 0, 0, .6);
   background: linear-gradient(180deg, #e0303c 0%, #b30f1c 55%, #7a0a12 100%); border: 1px solid var(--gold);
   box-shadow: 0 10px 28px rgba(193, 18, 31, .35), inset 0 1px 0 rgba(255, 255, 255, .35), inset 0 -3px 0 rgba(0, 0, 0, .35);
@@ -169,16 +169,19 @@ details.rules p { margin: 6px 0 0; }
 
 /* ---------- desktop: board centre stage, leverage left, bets right, nothing scrolls ---------- */
 @media (min-width: 900px) {
-  main { grid-template-columns: minmax(170px, 230px) auto minmax(300px, 400px); grid-template-rows: auto 1fr; justify-content: center; align-items: start; gap: 20px;
+  main { height: calc(100dvh - var(--head) + 22px); grid-template-columns: minmax(180px, 1fr) auto minmax(300px, 1.7fr); grid-template-rows: auto minmax(0, 1fr); justify-content: center; align-items: start; gap: 24px;
     grid-template-areas: "balls board bets" "status board bets"; }
-  .board-wrap { height: calc(100dvh - var(--head)); width: auto; max-width: 100%; }
+  /* as tall as the viewport allows, but never so wide that the side columns can't fit */
+  .board-wrap { height: min(calc(100dvh - var(--head)), calc((100vw - 560px) * 828 / 656)); width: auto; max-width: 100%; }
   .bets-sec { max-height: calc(100dvh - var(--head)); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
-  .status-sec { align-self: end; }
+  .status-sec { align-self: end; max-height: 100%; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+  .result .r { font-size: 13px; } .result .num { width: 34px; height: 34px; font-size: 14px; }
   #balls { grid-template-columns: 1fr; }
   #balls button { height: 56px; font-size: 20px; gap: 6px; }
   #balls .b { width: 14px; height: 14px; }
   #digits { grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); }
-  .cards { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .card span { font-size: clamp(10px, .9vw, 14px); }
+  .cards { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+  .card span { font-size: clamp(11px, .95vw, 15px); }
+  #digits { grid-template-columns: repeat(9, 1fr); }
 }
 @media (min-width: 900px) and (max-height: 760px) { .panel { gap: 12px; padding: 12px; } #balls button { height: 46px; } }

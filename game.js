@@ -19,12 +19,15 @@ const canvas = $('#board'), ctx = canvas.getContext('2d');
 let scale = 1, statik, bulbOn, bulbOff;
 const GOLD = '#d4af37', GOLD_LIGHT = '#f6e27a', GOLD_DARK = '#8a6a1e';
 
-// marquee bulbs run around the arch and down both sides of the frame
+// marquee bulbs run up the sides, round the corners and along the top of the frame
 const BULB_R = 4.2, bulbs = [];
 {
-  const rr = P.ARCH.r + 12, n = 30;
-  for (let i = 0; i <= n; i++) { const a = Math.PI + Math.PI * i / n; bulbs.push({ x: P.ARCH.x + rr * Math.cos(a), y: P.ARCH.y + rr * Math.sin(a) }); }
-  for (let y = P.ARCH.y + 30; y < P.H + 4; y += 30) { bulbs.unshift({ x: -12, y }); bulbs.push({ x: P.W + 12, y }); }
+  const rr = P.RC + 12, step = 30;
+  for (let y = P.H - 8; y > P.RC; y -= step) bulbs.push({ x: -12, y });
+  for (let i = 1; i < 6; i++) { const a = Math.PI + (Math.PI / 2) * i / 6; bulbs.push({ x: P.RC + rr * Math.cos(a), y: P.RC + rr * Math.sin(a) }); }
+  for (let x = P.RC; x <= P.W - P.RC; x += step) bulbs.push({ x, y: -12 });
+  for (let i = 1; i < 6; i++) { const a = -Math.PI / 2 + (Math.PI / 2) * i / 6; bulbs.push({ x: P.W - P.RC + rr * Math.cos(a), y: P.RC + rr * Math.sin(a) }); }
+  for (let y = P.RC; y < P.H - 4; y += step) bulbs.push({ x: P.W + 12, y });
 }
 
 function resize() {
@@ -53,7 +56,7 @@ function bulbSprite(on) {
 }
 
 function fieldPath(g) {
-  g.beginPath(); g.moveTo(0, P.ARCH.y); g.arc(P.ARCH.x, P.ARCH.y, P.ARCH.r, Math.PI, 0); g.lineTo(P.W, P.H); g.lineTo(0, P.H); g.closePath();
+  g.beginPath(); g.moveTo(0, P.H); g.lineTo(0, P.RC); g.arcTo(0, 0, P.RC, 0, P.RC); g.lineTo(P.W - P.RC, 0); g.arcTo(P.W, 0, P.W, P.RC, P.RC); g.lineTo(P.W, P.H); g.closePath();
 }
 
 function nail(g, x, y, r) {
@@ -128,7 +131,7 @@ function drawStatic(g) {
   for (const b of bulbs) { g.beginPath(); g.arc(b.x, b.y, BULB_R + 2, 0, 7); g.fillStyle = 'rgba(0,0,0,.5)'; g.fill(); }
   // painted field
   fieldPath(g); g.save(); g.clip();
-  const cream = g.createRadialGradient(300, 380, 50, 300, 380, 700);
+  const cream = g.createRadialGradient(300, 330, 50, 300, 330, 620);
   cream.addColorStop(0, '#fbf7ee'); cream.addColorStop(.7, '#ecdfc6'); cream.addColorStop(1, '#cbb995');
   g.fillStyle = cream; g.fillRect(0, 0, P.W, P.H);
   let s = 7; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;   // seeded speckle texture
@@ -138,11 +141,11 @@ function drawStatic(g) {
   g.fillStyle = 'rgba(80,50,20,.12)'; g.fillRect(P.RAIL_X, P.RAIL_TOP, P.W - P.RAIL_X, P.H - P.RAIL_TOP);
   // painted lettering
   g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
-  g.font = '700 46px Cinzel, Georgia, serif'; g.lineWidth = 7; g.strokeStyle = '#8a1a24'; g.strokeText('ΚΑΖΑΝΤΙ', 300, 64);
-  const gt = g.createLinearGradient(0, 40, 0, 88); gt.addColorStop(0, GOLD_LIGHT); gt.addColorStop(.55, GOLD); gt.addColorStop(1, GOLD_DARK);
-  g.fillStyle = gt; g.fillText('ΚΑΖΑΝΤΙ', 300, 64);
+  g.font = '700 46px Cinzel, Georgia, serif'; g.lineWidth = 7; g.strokeStyle = '#8a1a24'; g.strokeText('ΚΑΖΑΝΤΙ', 300, 48);
+  const gt = g.createLinearGradient(0, 24, 0, 72); gt.addColorStop(0, GOLD_LIGHT); gt.addColorStop(.55, GOLD); gt.addColorStop(1, GOLD_DARK);
+  g.fillStyle = gt; g.fillText('ΚΑΖΑΝΤΙ', 300, 48);
   g.font = '600 12px Cinzel, Georgia, serif'; g.fillStyle = 'rgba(90,60,30,.6)';
-  g.fillText('ΚΑΛΗ ΤΥΧΗ   ·   GOOD LUCK   ·   ΚΑΛΗ ΤΥΧΗ', 280, 832);
+  g.fillText('ΚΑΛΗ ΤΥΧΗ   ·   GOOD LUCK   ·   ΚΑΛΗ ΤΥΧΗ', 280, P.H - 24);
   // rails: candy canes + chrome lane rail
   for (const r of P.rails) {
     g.lineCap = 'round';
@@ -172,7 +175,7 @@ function drawStatic(g) {
   for (const d of P.deflectors) nail(g, d.x, d.y, d.r);
   for (const b of P.bumpers) medallion(g, b);
   // vignette
-  const vg = g.createRadialGradient(300, 420, 250, 300, 420, 620);
+  const vg = g.createRadialGradient(300, 370, 230, 300, 370, 560);
   vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(60,30,0,.28)');
   g.fillStyle = vg; g.fillRect(0, 0, P.W, P.H);
   g.restore();
@@ -301,7 +304,7 @@ function toast(msg) {
 // ---------- plunger input ----------
 canvas.addEventListener('pointerdown', (e) => {
   if (st.phase === 'result' || st.power) return;
-  st.pulling = e.clientY; canvas.setPointerCapture(e.pointerId);
+  st.pulling = e.clientY; try { canvas.setPointerCapture(e.pointerId); } catch {}
 });
 canvas.addEventListener('pointermove', (e) => {
   if (st.pulling === null) return;
@@ -322,11 +325,13 @@ const shoot = $('#shoot');
 let chargeT = 0, chargeRaf = 0;
 shoot.addEventListener('pointerdown', (e) => {
   if (st.phase === 'result' || st.power) return;
-  shoot.setPointerCapture(e.pointerId); chargeT = performance.now();
-  const charge = () => { st.pull = P.PLUNGER_PULL * (0.5 - 0.5 * Math.cos((performance.now() - chargeT) / 1200 * Math.PI)); sim.plunger = P.PLUNGER_REST + st.pull; shoot.style.setProperty('--p', st.pull / P.PLUNGER_PULL); chargeRaf = requestAnimationFrame(charge); };
+  try { shoot.setPointerCapture(e.pointerId); } catch {}
+  chargeT = performance.now();
+  const charge = () => { st.pull = pullFor(performance.now()); sim.plunger = P.PLUNGER_REST + st.pull; shoot.style.setProperty('--p', st.pull / P.PLUNGER_PULL); chargeRaf = requestAnimationFrame(charge); };
   charge();
 });
-const releaseBtn = () => { if (!chargeRaf) return; cancelAnimationFrame(chargeRaf); chargeRaf = 0; st.pulling = 0; release(); };
+const pullFor = (t) => P.PLUNGER_PULL * (0.5 - 0.5 * Math.cos((t - chargeT) / 1200 * Math.PI));   // eases 0 → full over 1.2 s, then back
+const releaseBtn = () => { if (!chargeRaf) return; cancelAnimationFrame(chargeRaf); chargeRaf = 0; st.pull = pullFor(performance.now()); st.pulling = 0; release(); };
 shoot.addEventListener('pointerup', releaseBtn);
 shoot.addEventListener('pointercancel', releaseBtn);
 

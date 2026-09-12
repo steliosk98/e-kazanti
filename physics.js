@@ -1,42 +1,42 @@
 // Board geometry + ball physics. Units are board units (W×H), y grows downward.
 // Pure JS, no DOM: test.mjs runs the same code in Node.
 
-export const W = 600, H = 860;          // full board incl. launch lane
+export const W = 600, H = 750;          // full board incl. launch lane
 export const FIELD_W = 560;             // playfield right edge; lane is to the right
-export const RAIL_X = 563, RAIL_TOP = 240;
-export const ARCH = { x: 300, y: 300, r: 300 };
+export const RAIL_X = 563, RAIL_TOP = 175;
+export const RC = 150;                  // radius of the rounded top corners
 export const R = 11;                    // ball radius
 export const NAIL_R = 2.5;
 export const SPACING = 16;              // nail spacing on number strips (< 2R so a ball can't pass)
 export const G = 1000;
 export const DT = 1 / 240;
-export const PLUNGER_REST = 810, PLUNGER_PULL = 40;
-export const LANE_BALL_X = 583;
-export const POWER_MIN = 1150, POWER_MAX = 1550;
+export const PLUNGER_REST = 700, PLUNGER_PULL = 40;
+export const LANE_BALL_X = 588;         // hugs the right wall so it meets the corner arc tangentially
+export const POWER_MIN = 1200, POWER_MAX = 1500;
 
 // numbers 1–90 across five strips: two short on top, two mid, one full-width bottom
 export const strips = [
-  { y: 320, x0: 40,  n: 14, first: 1 },
-  { y: 320, x0: 296, n: 13, first: 15 },
-  { y: 520, x0: 30,  n: 14, first: 28 },
-  { y: 520, x0: 306, n: 14, first: 42 },
-  { y: 780, x0: 0,   n: 35, first: 56 },
+  { y: 250, x0: 40,  n: 14, first: 1 },
+  { y: 250, x0: 296, n: 13, first: 15 },
+  { y: 450, x0: 30,  n: 14, first: 28 },
+  { y: 450, x0: 306, n: 14, first: 42 },
+  { y: 680, x0: 0,   n: 35, first: 56 },
 ];
 export const pins = [];
 strips.forEach((s, si) => {
   s.id = si;
   for (let i = 0; i <= s.n; i++) pins.push({ x: s.x0 + i * SPACING, y: s.y, r: NAIL_R, strip: s, i });
 });
-export const deflectors = [[150, 150], [300, 110], [450, 150], [215, 225], [385, 225], [300, 255]]
+export const deflectors = [[150, 95], [450, 95], [215, 160], [385, 160], [300, 130], [300, 195]]
   .map(([x, y]) => ({ x, y, r: 4 }));
 export const bumpers = [
-  { x: 110, y: 420, r: 16, s: 'heart' }, { x: 450, y: 420, r: 16, s: 'diamond' }, { x: 300, y: 430, r: 18, s: 'star' },
-  { x: 200, y: 655, r: 16, s: 'club' }, { x: 400, y: 655, r: 16, s: 'spade' },
+  { x: 110, y: 350, r: 16, s: 'heart' }, { x: 450, y: 350, r: 16, s: 'diamond' }, { x: 300, y: 360, r: 18, s: 'star' },
+  { x: 200, y: 565, r: 16, s: 'club' }, { x: 400, y: 565, r: 16, s: 'spade' },
 ];
 // candy-cane guide rails + the lane rail (capsules)
 export const rails = [
-  { x1: 0, y1: 360, x2: 28, y2: 470, r: 4 }, { x1: 560, y1: 360, x2: 532, y2: 470, r: 4 },
-  { x1: 0, y1: 570, x2: 80, y2: 720, r: 4 }, { x1: 560, y1: 570, x2: 480, y2: 720, r: 4 },
+  { x1: 0, y1: 290, x2: 28, y2: 400, r: 4 }, { x1: 560, y1: 290, x2: 532, y2: 400, r: 4 },
+  { x1: 0, y1: 495, x2: 80, y2: 635, r: 4 }, { x1: 560, y1: 495, x2: 480, y2: 635, r: 4 },
   { x1: RAIL_X, y1: RAIL_TOP, x2: RAIL_X, y2: H, r: 3, lane: true },
 ];
 
@@ -88,13 +88,13 @@ function stepBall(sim, b, dt) {
   b.vx *= 1 - 0.15 * dt; b.vy *= 1 - 0.15 * dt;
   b.x += b.vx * dt; b.y += b.vy * dt;
 
-  if (b.y < ARCH.y) {
-    const dx = b.x - ARCH.x, dy = b.y - ARCH.y, d = Math.hypot(dx, dy), m = ARCH.r - R;
+  // rounded top: quarter-circle corners, flat ceiling between them, straight walls below
+  if (b.y < RC && (b.x < RC || b.x > W - RC)) {
+    const cx = b.x < RC ? RC : W - RC, dx = b.x - cx, dy = b.y - RC, d = Math.hypot(dx, dy), m = RC - R;
     if (d > m) resolve(b, -dx / d, -dy / d, d - m, 0.3);
-  } else {
-    if (b.x < R) resolve(b, 1, 0, R - b.x, 0.5);
-    if (b.x > W - R) resolve(b, -1, 0, b.x - (W - R), 0.5);
-  }
+  } else if (b.y < R) resolve(b, 0, 1, R - b.y, 0.3);
+  if (b.x < R) resolve(b, 1, 0, R - b.x, 0.5);
+  if (b.x > W - R) resolve(b, -1, 0, b.x - (W - R), 0.5);
   if (b.y > H - R) resolve(b, 0, -1, b.y - (H - R), 0.3);
   if (inLane(b) && b.y > sim.plunger - R) resolve(b, 0, -1, b.y - (sim.plunger - R), 0.2);
 
@@ -164,7 +164,7 @@ export function step(sim, elapsed) {
 // one), so cards are balanced by measured landing frequency: numbers are dealt greedily to the
 // card with the lowest total weight. WEIGHTS = hits per number from `node test.mjs 800 --weights`;
 // regenerate after changing the board geometry.
-const WEIGHTS = [29,44,34,42,40,38,37,45,44,45,40,40,32,47,65,71,77,81,96,108,87,88,79,82,66,79,60,39,23,41,18,32,25,32,33,29,29,30,36,18,20,34,27,35,36,37,40,28,47,32,35,45,65,71,70,11,26,14,11,7,9,8,8,7,10,10,9,18,15,21,19,29,16,14,14,14,15,13,13,8,9,12,19,13,15,11,24,39,76,40];
+const WEIGHTS = [25,19,21,31,26,23,22,37,31,51,39,28,34,30,71,84,96,88,124,101,99,104,95,96,83,82,63,20,14,21,19,15,16,21,19,18,14,14,20,16,13,36,43,46,48,40,41,55,52,41,28,43,56,89,77,5,16,16,10,10,22,17,25,22,19,26,32,27,25,24,28,30,26,19,36,24,27,22,29,16,21,12,17,13,11,8,4,12,8,3];
 export const cards = (() => {
   const out = Array.from({ length: 10 }, () => ({ n: [], w: 0 }));
   const order = Array.from({ length: 90 }, (_, i) => i + 1).sort((a, b) => WEIGHTS[b - 1] - WEIGHTS[a - 1]);
