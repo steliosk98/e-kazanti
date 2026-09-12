@@ -22,38 +22,38 @@
   <div class="board-wrap">
     <canvas id="board" aria-label="Kazanti board. Drag down to pull the plunger."></canvas>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <button id="shoot" class="btn shoot" type="button" aria-label="Hold to pull the plunger, release to shoot"><span>SHOOT</span></button>
   </div>
 
-  <aside class="panel">
-    <div class="bets">
-      <section class="balls-sec">
-        <h2>Balls <span class="sub">leverage</span></h2>
-        <div class="seg" id="balls" role="group" aria-label="Number of balls"></div>
-      </section>
-      <section class="digits-sec">
-        <h2>Digit <span class="sub">wins on 7, 17, 27 …</span></h2>
-        <div class="seg" id="digits" role="group" aria-label="Last digit bet"></div>
-      </section>
-      <section class="cards-sec">
-        <h2>Card <span class="sub">or pick a card · 9 numbers</span></h2>
-        <div class="cards" id="cards" role="group" aria-label="Tombola cards"></div>
-      </section>
+  <section class="panel balls-sec">
+    <h2>Balls <span class="sub">leverage</span></h2>
+    <div class="seg" id="balls" role="group" aria-label="Number of balls"></div>
+  </section>
+
+  <aside class="panel bets-sec">
+    <section>
+      <h2>Digit <span class="sub">wins on 7, 17, 27 …</span></h2>
+      <div class="seg" id="digits" role="group" aria-label="Last digit bet"></div>
+    </section>
+    <section>
+      <h2>Card <span class="sub">or pick a card · 9 numbers</span></h2>
+      <div class="cards" id="cards" role="group" aria-label="Tombola cards"></div>
+    </section>
+  </aside>
+
+  <section class="panel status-sec">
+    <div class="bar">
+      <div id="cost" class="cost"></div>
+      <button id="next" class="btn next" hidden>Next round</button>
     </div>
     <div id="result" class="result" hidden></div>
-    <div class="actions">
-      <div class="bar">
-        <div id="cost" class="cost"></div>
-        <button id="next" class="btn next" hidden>Next round</button>
-      </div>
-      <button id="shoot" class="btn shoot" type="button" aria-label="Hold to pull the plunger, release to shoot"><span>SHOOT</span></button>
-      <p class="hint" id="hint">Hold <b>Shoot</b> to pull, release to fire — or drag <b>down</b> on the board.</p>
-    </div>
+    <p class="hint" id="hint">Hold <b>Shoot</b> to pull, release to fire — or drag <b>down</b> on the board.</p>
     <details class="rules">
       <summary>How to play</summary>
       <p>A steel ball is launched up the lane, drops through the nails and settles in a numbered gap. Hold a card containing that number, or pick the number's last digit, and you win. Every ball you add is scored against your bet.</p>
     </details>
     <p class="foot">1 credit per bet per ball · a hit pays 10 · virtual credits only</p>
-  </aside>
+  </section>
 </main>
 
 <dialog id="winDlg" class="win-dlg" aria-labelledby="winTitle">

@@ -343,6 +343,9 @@ function seg(el, items, get, set) {
 seg($('#balls'), [1, 2, 3, 4], () => st.balls, v => st.balls = v);
 [...$('#balls').children].forEach((b, i) => { for (let k = 0; k <= i; k++) b.insertAdjacentHTML('beforeend', '<span class="b"></span>'); });
 seg($('#digits'), [1, 2, 3, 4, 5, 6, 7, 8, 9], () => st.digit, v => { st.digit = st.digit === v ? null : v; if (st.digit) st.cards.clear(); });
+// phones: the bets sit below the board, so bring the Shoot button back into view once a bet is picked
+const showShoot = () => { if (innerWidth < 900 && cost()) $('#shoot').scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+$('#digits').addEventListener('click', showShoot);
 
 const CARD_COLORS = ['#8c1d2b', '#155e46', '#1f3a68', '#5b2a6e', '#9a5b13', '#0f5f6b', '#6b2f2f', '#2f5d2a', '#4a3b8f', '#7a4a10'];
 P.cards.forEach((nums, k) => {
@@ -354,7 +357,7 @@ P.cards.forEach((nums, k) => {
     c.appendChild(s);
   }
   const tag = document.createElement('i'); tag.textContent = k + 1; c.appendChild(tag);
-  c.onclick = () => { if (st.phase !== 'bet') return; const had = st.cards.has(k); st.cards.clear(); if (!had) { st.cards.add(k); st.digit = null; } refresh(); };   // one bet: a card or a digit
+  c.onclick = () => { if (st.phase !== 'bet') return; const had = st.cards.has(k); st.cards.clear(); if (!had) { st.cards.add(k); st.digit = null; } refresh(); showShoot(); };   // one bet: a card or a digit
   $('#cards').appendChild(c);
 });
 
