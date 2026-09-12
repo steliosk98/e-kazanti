@@ -28,8 +28,7 @@ const BULB_R = 4.2, bulbs = [];
 }
 
 function resize() {
-  const w = canvas.clientWidth, dpr = Math.min(devicePixelRatio || 1, 3);
-  canvas.style.height = (w * CH / CW) + 'px';
+  const w = canvas.clientWidth, dpr = Math.min(devicePixelRatio || 1, 3);   // CSS aspect-ratio keeps the box at CW:CH
   canvas.width = Math.round(w * dpr); canvas.height = Math.round(w * dpr * CH / CW);
   scale = canvas.width / CW;
   statik = document.createElement('canvas'); statik.width = canvas.width; statik.height = canvas.height;
@@ -394,6 +393,7 @@ function loop(now) {
   P.step(sim, Math.min(now - last, 100) / 1000); last = now;
   tick(now); clicks(); drawFrame(now); requestAnimationFrame(loop);
 }
+canvas.parentElement.style.aspectRatio = `${CW} / ${CH}`;
 new ResizeObserver(resize).observe(canvas);
 document.fonts.ready.then(resize);
 saveCredits(); refresh(); resize(); requestAnimationFrame(loop);

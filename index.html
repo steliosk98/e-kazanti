@@ -25,29 +25,34 @@
   </div>
 
   <aside class="panel">
-    <section>
-      <h2>Balls <span class="sub">leverage</span></h2>
-      <div class="seg" id="balls" role="group" aria-label="Number of balls"></div>
-    </section>
-    <section>
-      <h2>Digit <span class="sub">wins on 7, 17, 27 … · or pick a card</span></h2>
-      <div class="seg" id="digits" role="group" aria-label="Last digit bet"></div>
-    </section>
-    <section>
-      <h2>Card <span class="sub">9 numbers · or pick a digit</span></h2>
-      <div class="cards" id="cards" role="group" aria-label="Tombola cards"></div>
-    </section>
-    <div class="bar">
-      <div id="cost" class="cost"></div>
-      <button id="next" class="btn next" hidden>Next round</button>
+    <div class="bets">
+      <section class="balls-sec">
+        <h2>Balls <span class="sub">leverage</span></h2>
+        <div class="seg" id="balls" role="group" aria-label="Number of balls"></div>
+      </section>
+      <section class="digits-sec">
+        <h2>Digit <span class="sub">wins on 7, 17, 27 …</span></h2>
+        <div class="seg" id="digits" role="group" aria-label="Last digit bet"></div>
+      </section>
+      <section class="cards-sec">
+        <h2>Card <span class="sub">or pick a card · 9 numbers</span></h2>
+        <div class="cards" id="cards" role="group" aria-label="Tombola cards"></div>
+      </section>
     </div>
     <div id="result" class="result" hidden></div>
-    <button id="shoot" class="btn shoot" type="button" aria-label="Hold to pull the plunger, release to shoot"><span>SHOOT</span></button>
-    <p class="hint" id="hint">Hold <b>Shoot</b> to pull, release to fire — or drag <b>down</b> on the board.</p>
+    <div class="actions">
+      <div class="bar">
+        <div id="cost" class="cost"></div>
+        <button id="next" class="btn next" hidden>Next round</button>
+      </div>
+      <button id="shoot" class="btn shoot" type="button" aria-label="Hold to pull the plunger, release to shoot"><span>SHOOT</span></button>
+      <p class="hint" id="hint">Hold <b>Shoot</b> to pull, release to fire — or drag <b>down</b> on the board.</p>
+    </div>
     <details class="rules">
       <summary>How to play</summary>
-      <p>A steel ball is launched up the lane, drops through the nails and settles in a numbered gap. Hold a card containing that number, or pick the number's last digit, and you win. Every ball you add is scored against every bet.</p>
+      <p>A steel ball is launched up the lane, drops through the nails and settles in a numbered gap. Hold a card containing that number, or pick the number's last digit, and you win. Every ball you add is scored against your bet.</p>
     </details>
+    <p class="foot">1 credit per bet per ball · a hit pays 10 · virtual credits only</p>
   </aside>
 </main>
 
@@ -63,7 +68,6 @@
   </div>
 </dialog>
 
-<footer>1 credit per bet per ball · a hit pays 10 · virtual credits only</footer>
 <script type="module" src="game.js"></script>
 </body>
 </html>
