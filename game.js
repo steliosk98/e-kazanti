@@ -60,9 +60,9 @@ function fieldPath(g) {
 function nail(g, x, y, r) {
   g.beginPath(); g.ellipse(x + 1.2, y + 1.8, r, r * .8, 0, 0, 7); g.fillStyle = 'rgba(0,0,0,.35)'; g.fill();
   const gr = g.createRadialGradient(x - r * .4, y - r * .4, r * .1, x, y, r);
-  gr.addColorStop(0, '#fff'); gr.addColorStop(.5, '#c9ccd1'); gr.addColorStop(1, '#5c6066');
+  gr.addColorStop(0, '#fff'); gr.addColorStop(.45, '#d5d9de'); gr.addColorStop(1, '#4a4e55');
   g.beginPath(); g.arc(x, y, r, 0, 7); g.fillStyle = gr; g.fill();
-  g.strokeStyle = 'rgba(30,32,36,.8)'; g.lineWidth = .8; g.stroke();
+  g.strokeStyle = 'rgba(20,22,26,.9)'; g.lineWidth = 1.1; g.stroke();
 }
 
 // card-suit shapes, drawn centred on 0,0 with size s
@@ -161,15 +161,15 @@ function drawStatic(g) {
   const colors = ['#fff7d6', '#fff7d6', '#dcefff', '#dcefff', null];
   for (const [i, sp] of P.strips.entries()) {
     const x0 = sp.x0 - 5, x1 = sp.x0 + sp.n * P.SPACING + 5;
-    g.fillStyle = 'rgba(0,0,0,.2)'; g.fillRect(x0 + 1, sp.y - 8, x1 - x0, 20);
+    g.fillStyle = 'rgba(0,0,0,.2)'; g.fillRect(x0 + 1, sp.y - 6, x1 - x0, 28);
     if (colors[i]) g.fillStyle = colors[i];
     else { const br = g.createLinearGradient(0, sp.y - 10, 0, sp.y + 10); br.addColorStop(0, '#f8e7a0'); br.addColorStop(.5, '#e2c05a'); br.addColorStop(1, '#c39a34'); g.fillStyle = br; }
-    g.fillRect(x0, sp.y - 10, x1 - x0, 20);
-    g.strokeStyle = 'rgba(90,60,20,.55)'; g.lineWidth = 1; g.strokeRect(x0 + .5, sp.y - 9.5, x1 - x0 - 1, 19);
-    g.fillStyle = '#1a1410'; g.font = '700 8.5px Poppins, sans-serif';
-    for (let k = 0; k < sp.n; k++) g.fillText(sp.first + k, sp.x0 + (k + .5) * P.SPACING, sp.y + 4.5);
+    g.fillRect(x0, sp.y - 8, x1 - x0, 28);
+    g.strokeStyle = 'rgba(90,60,20,.55)'; g.lineWidth = 1; g.strokeRect(x0 + .5, sp.y - 7.5, x1 - x0 - 1, 27);
+    g.fillStyle = '#14100c'; g.font = '700 10px Poppins, sans-serif';
+    for (let k = 0; k < sp.n; k++) g.fillText(sp.first + k, sp.x0 + (k + .5) * P.SPACING, sp.y + 12);
   }
-  for (const p of P.pins) nail(g, p.x, p.y, 3.6);
+  for (const p of P.pins) nail(g, p.x, p.y, 4.2);
   for (const d of P.deflectors) nail(g, d.x, d.y, d.r);
   for (const b of P.bumpers) medallion(g, b);
   // vignette
