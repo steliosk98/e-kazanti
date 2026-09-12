@@ -45,7 +45,7 @@ export function createSim(rand = Math.random) {
 }
 
 export function spawnBall(sim, id) {
-  const b = { id, x: LANE_BALL_X, y: sim.plunger - R, vx: 0, vy: 0, ax: 0, ay: 0, restT: 0, state: 'lane', number: null, nudges: 0 };
+  const b = { id, x: LANE_BALL_X, y: sim.plunger - R, vx: 0, vy: 0, ax: 0, ay: 0, restT: 0, hits: 0, hitV: 0, state: 'lane', number: null, nudges: 0 };
   sim.balls.push(b);
   return b;
 }
@@ -64,6 +64,7 @@ function resolve(b, nx, ny, pen, e, mu = 0.02) {
   if (vn < 0) {
     const k = -vn < 40 ? 1 : 1 + e;          // slow hits don't bounce → balls settle
     b.vx -= k * vn * nx; b.vy -= k * vn * ny;
+    if (k > 1) { b.hits++; b.hitV = -vn; }   // for sound
   }
   b.vx *= 1 - mu; b.vy *= 1 - mu;
 }

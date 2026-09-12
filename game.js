@@ -188,7 +188,7 @@ function finish() {
 }
 
 function nextRound() {
-  st.phase = 'bet'; sim.balls.length = 0;
+  st.phase = 'bet'; sim.balls.length = 0; seenHits.clear();
   $('#result').hidden = true; $('#next').hidden = true; shoot.disabled = false; setBetsEnabled(true);
   document.querySelectorAll('.card span.hit').forEach(el => el.classList.remove('hit'));
   $('#hint').innerHTML = '…or drag <b>down</b> on the board to pull the plunger.';
@@ -270,11 +270,27 @@ function refresh() {
 }
 $('#next').onclick = nextRound;
 
+// ---------- sound: a short metallic tick per bounce ----------
+let audio;
+const seenHits = new Map();
+function clicks() {
+  if (!audio) return;
+  for (const b of sim.balls) {
+    const n = b.hits - (seenHits.get(b) || 0); seenHits.set(b, b.hits);
+    if (!n) continue;
+    const o = audio.createOscillator(), gnode = audio.createGain(), t = audio.currentTime;
+    o.type = 'square'; o.frequency.setValueAtTime(1800 + Math.random() * 600, t);
+    gnode.gain.setValueAtTime(Math.min(.25, b.hitV / 1500), t); gnode.gain.exponentialRampToValueAtTime(.001, t + .04);
+    o.connect(gnode).connect(audio.destination); o.start(t); o.stop(t + .05);
+  }
+}
+addEventListener('pointerdown', () => { audio ||= new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); }, { once: true });
+
 // ---------- loop ----------
 let last = performance.now();
 function loop(now) {
   P.step(sim, Math.min(now - last, 100) / 1000); last = now;
-  tick(now); drawFrame(); requestAnimationFrame(loop);
+  tick(now); clicks(); drawFrame(); requestAnimationFrame(loop);
 }
 new ResizeObserver(resize).observe(canvas);
 document.fonts.ready.then(resize);
