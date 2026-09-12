@@ -161,13 +161,13 @@ function drawStatic(g) {
   const colors = ['#fff7d6', '#fff7d6', '#dcefff', '#dcefff', null];
   for (const [i, sp] of P.strips.entries()) {
     const x0 = sp.x0 - 5, x1 = sp.x0 + sp.n * P.SPACING + 5;
-    g.fillStyle = 'rgba(0,0,0,.2)'; g.fillRect(x0 + 1, sp.y - 6, x1 - x0, 28);
+    g.fillStyle = 'rgba(0,0,0,.2)'; g.fillRect(x0 + 1, sp.y - 6, x1 - x0, 31);
     if (colors[i]) g.fillStyle = colors[i];
     else { const br = g.createLinearGradient(0, sp.y - 10, 0, sp.y + 10); br.addColorStop(0, '#f8e7a0'); br.addColorStop(.5, '#e2c05a'); br.addColorStop(1, '#c39a34'); g.fillStyle = br; }
-    g.fillRect(x0, sp.y - 8, x1 - x0, 28);
-    g.strokeStyle = 'rgba(90,60,20,.55)'; g.lineWidth = 1; g.strokeRect(x0 + .5, sp.y - 7.5, x1 - x0 - 1, 27);
-    g.fillStyle = '#14100c'; g.font = '700 10px Poppins, sans-serif';
-    for (let k = 0; k < sp.n; k++) g.fillText(sp.first + k, sp.x0 + (k + .5) * P.SPACING, sp.y + 12);
+    g.fillRect(x0, sp.y - 8, x1 - x0, 31);
+    g.strokeStyle = 'rgba(90,60,20,.55)'; g.lineWidth = 1; g.strokeRect(x0 + .5, sp.y - 7.5, x1 - x0 - 1, 30);
+    g.fillStyle = '#14100c'; g.font = '700 11.5px Poppins, sans-serif';
+    for (let k = 0; k < sp.n; k++) g.fillText(sp.first + k, sp.x0 + (k + .5) * P.SPACING, sp.y + 13.5);
   }
   for (const p of P.pins) nail(g, p.x, p.y, 4.2);
   for (const d of P.deflectors) nail(g, d.x, d.y, d.r);

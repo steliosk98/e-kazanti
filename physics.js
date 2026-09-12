@@ -7,7 +7,7 @@ export const RAIL_X = 563, RAIL_TOP = 240;
 export const ARCH = { x: 300, y: 300, r: 300 };
 export const R = 11;                    // ball radius
 export const NAIL_R = 2.5;
-export const SPACING = 14;              // nail spacing on number strips (< 2R so a ball can't pass)
+export const SPACING = 16;              // nail spacing on number strips (< 2R so a ball can't pass)
 export const G = 1000;
 export const DT = 1 / 240;
 export const PLUNGER_REST = 810, PLUNGER_PULL = 40;
@@ -16,11 +16,11 @@ export const POWER_MIN = 1150, POWER_MAX = 1550;
 
 // numbers 1–90 across five strips: two short on top, two mid, one full-width bottom
 export const strips = [
-  { y: 320, x0: 70,  n: 12, first: 1 },
-  { y: 320, x0: 322, n: 12, first: 13 },
-  { y: 520, x0: 40,  n: 13, first: 25 },
-  { y: 520, x0: 338, n: 13, first: 38 },
-  { y: 780, x0: 0,   n: 40, first: 51 },
+  { y: 320, x0: 40,  n: 14, first: 1 },
+  { y: 320, x0: 296, n: 13, first: 15 },
+  { y: 520, x0: 30,  n: 14, first: 28 },
+  { y: 520, x0: 306, n: 14, first: 42 },
+  { y: 780, x0: 0,   n: 35, first: 56 },
 ];
 export const pins = [];
 strips.forEach((s, si) => {
@@ -144,9 +144,8 @@ function checkRest(sim, b, dt) {
   const n = settledNumber(b);
   if (n) { b.state = 'settled'; b.number = n; b.vx = b.vy = 0; return; }
   // stuck somewhere unnumbered (leaning on another ball, a nail tip, ...) → kick it, away from any ball it touches
-  const o = sim.balls.find(o => o !== b && Math.hypot(o.x - b.x, o.y - b.y) < 2 * R + 1);
-  b.vx = o ? Math.sign(b.x - o.x || sim.rand() - 0.5) * 150 : (sim.rand() - 0.5) * 300;
-  b.vy = -450; b.restT = 0; b.nudges++;   // mostly up: clear the neighbours first, then drift sideways
+  // random direction and strength, so a kick that bounces straight back doesn't repeat forever
+  b.vx = (sim.rand() - 0.5) * 400; b.vy = -(350 + sim.rand() * 200); b.restT = 0; b.nudges++;
 }
 
 export function step(sim, elapsed) {
@@ -160,15 +159,18 @@ export function step(sim, elapsed) {
   }
 }
 
-// The 10 tombola cards: 9 numbers each, disjoint, covering 1–90. Deterministic (seeded) so
-// every player sees the same set. Stratified 5 upper-strip + 4 bottom-strip numbers per card,
-// so the board's physical bias (bottom strip catches ~half the balls) doesn't favour a card.
+// The 10 tombola cards: 9 numbers each, disjoint, covering 1–90, the same set for every player.
+// The board is physically biased (upper strips catch soft balls far more often than the bottom
+// one), so cards are balanced by measured landing frequency: numbers are dealt greedily to the
+// card with the lowest total weight. WEIGHTS = hits per number from `node test.mjs 800 --weights`;
+// regenerate after changing the board geometry.
+const WEIGHTS = [29,44,34,42,40,38,37,45,44,45,40,40,32,47,65,71,77,81,96,108,87,88,79,82,66,79,60,39,23,41,18,32,25,32,33,29,29,30,36,18,20,34,27,35,36,37,40,28,47,32,35,45,65,71,70,11,26,14,11,7,9,8,8,7,10,10,9,18,15,21,19,29,16,14,14,14,15,13,13,8,9,12,19,13,15,11,24,39,76,40];
 export const cards = (() => {
-  let seed = 20260101;
-  const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 2 ** 32; };
-  const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const upper = shuffle(Array.from({ length: 50 }, (_, i) => i + 1));
-  const lower = shuffle(Array.from({ length: 40 }, (_, i) => i + 51));
-  return Array.from({ length: 10 }, (_, k) =>
-    [...upper.slice(k * 5, k * 5 + 5), ...lower.slice(k * 4, k * 4 + 4)].sort((a, b) => a - b));
+  const out = Array.from({ length: 10 }, () => ({ n: [], w: 0 }));
+  const order = Array.from({ length: 90 }, (_, i) => i + 1).sort((a, b) => WEIGHTS[b - 1] - WEIGHTS[a - 1]);
+  for (const n of order) {
+    const c = out.filter(c => c.n.length < 9).reduce((a, b) => (b.w < a.w ? b : a));
+    c.n.push(n); c.w += WEIGHTS[n - 1];
+  }
+  return out.map(c => c.n.sort((x, y) => x - y));
 })();
