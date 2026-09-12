@@ -351,7 +351,7 @@ P.cards.forEach((nums, k) => {
     c.appendChild(s);
   }
   const tag = document.createElement('i'); tag.textContent = k + 1; c.appendChild(tag);
-  c.onclick = () => { if (st.phase !== 'bet') return; st.cards.has(k) ? st.cards.delete(k) : st.cards.add(k); refresh(); };
+  c.onclick = () => { if (st.phase !== 'bet') return; const had = st.cards.has(k); st.cards.clear(); if (!had) st.cards.add(k); refresh(); };   // one card at a time
   $('#cards').appendChild(c);
 });
 
