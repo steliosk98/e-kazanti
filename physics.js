@@ -30,8 +30,8 @@ strips.forEach((s, si) => {
 export const deflectors = [[150, 150], [300, 110], [450, 150], [215, 225], [385, 225], [300, 255]]
   .map(([x, y]) => ({ x, y, r: 4 }));
 export const bumpers = [
-  { x: 110, y: 420, r: 16, e: '❤️' }, { x: 450, y: 420, r: 16, e: '⭐' }, { x: 300, y: 430, r: 18, e: '🍊' },
-  { x: 200, y: 655, r: 16, e: '🍀' }, { x: 400, y: 655, r: 16, e: '🍒' },
+  { x: 110, y: 420, r: 16, s: 'heart' }, { x: 450, y: 420, r: 16, s: 'diamond' }, { x: 300, y: 430, r: 18, s: 'star' },
+  { x: 200, y: 655, r: 16, s: 'club' }, { x: 400, y: 655, r: 16, s: 'spade' },
 ];
 // candy-cane guide rails + the lane rail (capsules)
 export const rails = [
