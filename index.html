@@ -51,6 +51,18 @@
   </aside>
 </main>
 
+<dialog id="winDlg" class="win-dlg" aria-labelledby="winTitle">
+  <div class="win-rays" aria-hidden="true"></div>
+  <p class="win-kicker">Καζαντί!</p>
+  <h2 id="winTitle" class="gold">You win</h2>
+  <p id="winTotal" class="win-total"></p>
+  <ul id="winWhy" class="win-why"></ul>
+  <div class="win-actions">
+    <button id="winClose" class="btn ghost" type="button">See board</button>
+    <button id="winNext" class="btn next" type="button">Next round</button>
+  </div>
+</dialog>
+
 <footer>1 credit per bet per ball · a hit pays 10 · virtual credits only</footer>
 <script type="module" src="game.js"></script>
 </body>

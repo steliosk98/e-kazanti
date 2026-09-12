@@ -264,11 +264,11 @@ function tick(now) {
 
 function finish() {
   st.phase = 'result';
-  let total = 0; const rows = [];
+  let total = 0; const rows = [], why = [];
   for (const b of sim.balls) {
     const n = b.number, hits = [];
-    for (const c of st.cards) if (P.cards[c].includes(n)) hits.push(`card ${c + 1}`);
-    if (st.digit && n % 10 === st.digit) hits.push(`digit ${st.digit}`);
+    for (const c of st.cards) if (P.cards[c].includes(n)) { hits.push(`card ${c + 1}`); why.push(`<li><span class="num">${n}</span><span><b>${n}</b> is on your card ${c + 1}</span><em>+${PAY}</em></li>`); }
+    if (st.digit && n % 10 === st.digit) { hits.push(`digit ${st.digit}`); why.push(`<li><span class="num">${n}</span><span><b>${n}</b> ends in your digit <b>${st.digit}</b></span><em>+${PAY}</em></li>`); }
     total += hits.length * PAY;
     rows.push(`<div class="r"><span class="num">${n}</span>${hits.length ? `<span class="win">+${hits.length * PAY} · ${hits.join(', ')}</span>` : '<span class="lose">no hit</span>'}</div>`);
   }
@@ -277,7 +277,11 @@ function finish() {
   $('#result').innerHTML = rows.join('') + `<div class="total ${total ? 'yes' : 'no'}">${total ? `You win ${total} credits` : 'No luck this time'}</div>`;
   $('#result').hidden = false; $('#next').hidden = false; shoot.disabled = true;
   $('#hint').textContent = '';
-  toast(total ? `+${total} credits!` : 'No hit — try again');
+  if (total) {
+    $('#winTotal').textContent = `+${total} credits`;
+    $('#winWhy').innerHTML = why.join('');
+    $('#winDlg').showModal();
+  } else toast('No hit — try again');
   const nums = new Set(sim.balls.map(b => b.number));
   document.querySelectorAll('.card span.n').forEach(el => el.classList.toggle('hit', nums.has(+el.textContent)));
 }
@@ -365,6 +369,8 @@ function refresh() {
   $('#cost').innerHTML = `Stake <b>${cost()}</b> · ${st.balls} ball${st.balls > 1 ? 's' : ''} × ${st.cards.size + (st.digit ? 1 : 0)} bet${st.cards.size + (st.digit ? 1 : 0) === 1 ? '' : 's'}`;
 }
 $('#next').onclick = nextRound;
+$('#winNext').onclick = () => { $('#winDlg').close(); nextRound(); };
+$('#winClose').onclick = () => $('#winDlg').close();
 
 // ---------- sound: a short metallic tick per bounce ----------
 let audio;
