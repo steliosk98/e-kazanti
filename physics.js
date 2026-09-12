@@ -12,7 +12,7 @@ export const G = 1000;
 export const DT = 1 / 240;
 export const PLUNGER_REST = 700, PLUNGER_PULL = 40;
 export const LANE_BALL_X = 588;         // hugs the right wall so it meets the corner arc tangentially
-export const POWER_MIN = 1200, POWER_MAX = 1500;
+export const POWER_MIN = 1200, POWER_MAX = 1800;
 
 // numbers 1–90 across five strips: two short on top, two mid, one full-width bottom
 export const strips = [
@@ -164,7 +164,7 @@ export function step(sim, elapsed) {
 // one), so cards are balanced by measured landing frequency: numbers are dealt greedily to the
 // card with the lowest total weight. WEIGHTS = hits per number from `node test.mjs 800 --weights`;
 // regenerate after changing the board geometry.
-const WEIGHTS = [25,19,21,31,26,23,22,37,31,51,39,28,34,30,71,84,96,88,124,101,99,104,95,96,83,82,63,20,14,21,19,15,16,21,19,18,14,14,20,16,13,36,43,46,48,40,41,55,52,41,28,43,56,89,77,5,16,16,10,10,22,17,25,22,19,26,32,27,25,24,28,30,26,19,36,24,27,22,29,16,21,12,17,13,11,8,4,12,8,3];
+const WEIGHTS = [54,63,64,70,78,57,70,39,55,49,44,45,35,45,59,69,93,93,71,89,94,82,78,60,80,65,52,46,27,37,35,24,41,39,34,33,26,35,24,18,19,22,30,23,23,28,37,27,40,21,16,33,34,60,51,3,11,7,9,12,13,13,15,17,17,16,26,31,19,18,26,24,27,17,19,16,25,15,20,20,17,12,17,7,14,23,7,9,15,7];
 export const cards = (() => {
   const out = Array.from({ length: 10 }, () => ({ n: [], w: 0 }));
   const order = Array.from({ length: 90 }, (_, i) => i + 1).sort((a, b) => WEIGHTS[b - 1] - WEIGHTS[a - 1]);
